@@ -50,7 +50,7 @@ pip install -r requirements.txt
 copy .env.copy .env
 ```
 
-***- Apply migrations:***
+***- Apply migrations in the folder with the manage.py file:***
 ```
 python manage.py migrate
 ```
@@ -59,10 +59,6 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-***- In the folder with the manage.py file, run the command:***
-```
-python manage.py runserver
-```
 ***- Start development server at http://127.0.0.1:8000/admin***
 
 ***- For API documentation goto http://127.0.0.1:8000/redoc or http://127.0.0.1:8000/swagger***
