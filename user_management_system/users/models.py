@@ -8,7 +8,5 @@ class User(AbstractUser):
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
-    # Add any other fields you require for your user model
-
     def __str__(self):
         return self.username

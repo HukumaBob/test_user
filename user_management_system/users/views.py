@@ -1,16 +1,25 @@
 from django.contrib.auth.hashers import make_password
-from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import User
+from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
-from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserRegistrationAPIView(APIView):
+    """
+    API view for user registration.
+
+    Allows new users to register by providing necessary information.
+
+    HTTP Methods:
+    - POST: Register a new user.
+
+    Permissions:
+    - AllowAny: Anyone can access this view.
+    """
+
     permission_classes = (AllowAny,)
 
     @staticmethod
@@ -27,10 +36,31 @@ class UserRegistrationAPIView(APIView):
 
 
 class UserLoginAPIView(APIView):
+    """
+    API view for user login.
+
+    Allows users to authenticate and obtain JWT tokens for accessing protected endpoints.
+
+    HTTP Methods:
+    - POST: Authenticate user and provide JWT tokens.
+
+    Permissions:
+    - AllowAny: Anyone can access this view.
+    """
+
     permission_classes = (AllowAny,)
 
     @staticmethod
     def post(request):
+        """
+        Authenticate the user and provide JWT tokens upon successful login.
+
+        Args:
+        - request: The HTTP request object containing user credentials.
+
+        Returns:
+        - Response: A response containing JWT tokens and user data upon successful login.
+        """
         username = request.data.get('username')
         password = request.data.get('password')
 
@@ -40,64 +70,20 @@ class UserLoginAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # You can customize the logic to handle login with the appropriate authentication backend.
-        # For example, use Django's built-in authenticate() function with username and password:
         from django.contrib.auth import authenticate
         user = authenticate(username=username, password=password)
 
         if user is None:
             return Response({'message': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # If using JWTAuthentication, generate a refresh token and access token.
         refresh = RefreshToken.for_user(user)
         response_data = {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'user': UserSerializer(user).data  # Serialize the user data to include in the response
+            'user': UserSerializer(user).data
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-class UserProfileAPIView(APIView):
-    permission_classes = (IsAuthenticated,)
 
-    @staticmethod
-    def get(request, pk):
-        user = get_object_or_404(User, id=pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    @staticmethod
-    def put(request, pk):
-        serializer = UserSerializer(request.user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @staticmethod
-    def delete(request, pk=None):
-        request.user.delete()
-        return Response({'message': 'Account deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-
-
-class UserViewSet(ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    def get_permissions(self):
-        if self.action == 'create':
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        instance.delete()

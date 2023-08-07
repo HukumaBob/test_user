@@ -4,11 +4,7 @@ Background:
 Your company is developing a new web application that requires a user management system. The application will allow users to register, log in, view/update their profiles, and perform basic CRUD operations on user accounts. The frontend should be user-friendly and responsive, while the backend should be secure and efficient.
 
 Task Overview:
-Create a user management system as a web application. The application should consist of both frontend and backend components and adhere to industry best practices for security, performance, and code organization. You are free to use any programming languages, frameworks, and technologies you're comfortable with.
-
-A social network for bloggers. Allows writing posts and publishing them in separate groups, subscribing to posts, adding and deleting entries, and commenting on them.
-Subscriptions to favorite bloggers.
-
+Create a user management system as a web application. The application should consist of backend and adhere to industry best practices for security, performance, and code organization. You are free to use any programming languages, frameworks, and technologies you're comfortable with.
 
 ## Backend Requirements:
 
@@ -48,6 +44,10 @@ source venv/Scripts/activate
 ***- Install dependencies from the requirements.txt file:***
 ```
 pip install -r requirements.txt
+```
+***- Add .env***
+```
+copy .env.copy .env
 ```
 
 ***- Apply migrations:***
